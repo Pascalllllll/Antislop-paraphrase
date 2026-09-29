@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; worker-src 'self'; connect-src 'none'; font-src 'self'; manifest-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="Paste AI-sounding text and get it back without the tells: em dashes, buzzwords, chatbot lines, filler. Runs in your browser.">
+  <meta name="color-scheme" content="light dark">
+  <title>Antislop Paraphrase</title>
+  <link rel="icon" href="data:,">
+  <script src="js/theme-init.js"></script>
+  <link rel="preload" href="fonts/inter-var-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip" href="#input">Skip to the text box</a>
+
+  <header class="top">
+    <div class="top-in">
+      <p class="wordmark">Antislop <span>Paraphrase</span></p>
+      <div class="top-actions">
+        <button type="button" class="theme" id="tour-open">Tour</button>
+        <button type="button" class="theme" id="theme" aria-pressed="false">
+          <span class="theme-dot" aria-hidden="true"></span><span id="theme-label" class="theme-label">Dark mode</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro" aria-labelledby="title">
+      <h1 id="title">Cross out the <span class="struck">AI&nbsp;tells</span>.</h1>
+      <p class="lede">Paste text that sounds machine-made. This page swaps the buzzwords, cuts the chatbot lines, and replaces em dashes. It all happens inside your browser, and nothing you paste is sent anywhere.</p>
+      <p class="demo" aria-label="Examples of edits">
+        <span><del>delve into</del> <ins>look at</ins></span>
+        <span><del>in order to</del> <ins>to</ins></span>
+        <span><del>seamless</del> <ins>smooth</ins></span>
+        <span><del>I hope this helps!</del></span>
+      </p>
+    </section>
+
+    <section class="desk" aria-label="Rewrite tool">
+      <div class="sheet sheet-in">
+        <div class="sheet-head">
+          <label for="input" class="sheet-title">Your text</label>
+          <span class="meta" id="in-count" aria-live="polite">0 words</span>
+        </div>
+        <textarea id="input" spellcheck="true" autocomplete="off" placeholder="Paste the text here."></textarea>
+
+        <div class="actions">
+          <button type="button" class="btn-primary" id="run">Rewrite text</button>
+          <button type="button" class="btn" id="sample">Load a sample</button>
+          <button type="button" class="btn" id="clear">Clear</button>
+          <span class="hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> also works</span>
+        </div>
+        <p class="notice" id="in-msg" role="status" aria-live="polite"></p>
+
+        <details class="rules" id="rules">
+          <summary>Rules to apply <span class="meta" id="rules-count"></span></summary>
+          <fieldset>
+            <legend class="sr">Choose which kinds of edits to make</legend>
+            <div class="rule-list" id="rule-list"></div>
+          </fieldset>
+        </details>
+      </div>
+
+      <div class="sheet sheet-out" aria-labelledby="out-title">
+        <div class="sheet-head">
+          <h2 class="sheet-title" id="out-title">Rewritten</h2>
+          <div class="tabs" role="tablist" aria-label="Result view">
+            <button type="button" role="tab" id="tab-clean" aria-controls="panel-clean" aria-selected="true">Clean text</button>
+            <button type="button" role="tab" id="tab-marked" aria-controls="panel-marked" aria-selected="false" tabindex="-1">Marked changes</button>
+          </div>
+        </div>
+
+        <div class="out-body">
+          <div class="state" id="state" role="status" aria-live="polite">
+            <p class="state-title" id="state-title">Nothing here yet.</p>
+            <p id="state-text">Paste something into the box and press Rewrite text. The cleaned version shows up here.</p>
+            <div class="progress" id="progress" hidden><span id="progress-bar"></span></div>
+          </div>
+          <div role="tabpanel" id="panel-clean" aria-labelledby="tab-clean" hidden>
+            <label for="output" class="sr">Rewritten text</label>
+            <textarea id="output" readonly></textarea>
+          </div>
+          <div role="tabpanel" id="panel-marked" aria-labelledby="tab-marked" tabindex="0" hidden>
+            <div class="marked" id="marked"></div>
+          </div>
+        </div>
+
+        <div class="actions" id="out-actions" hidden>
+          <button type="button" class="btn" id="copy">Copy text</button>
+          <button type="button" class="btn" id="download">Download .txt</button>
+          <span class="meta" id="out-count"></span>
+        </div>
+        <p class="notice" id="out-msg" role="status" aria-live="polite"></p>
+
+        <div class="tally" id="tally" hidden>
+          <h3>Edits made</h3>
+          <ul id="tally-list"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="catalog" aria-labelledby="catalog-title">
+      <h2 id="catalog-title">What gets crossed out</h2>
+      <p class="catalog-lede">Each rule targets a pattern that shows up far more in machine-written text than in writing people do by hand. Every rule can be switched off under <a href="#rules" id="rules-link">Rules to apply</a>.</p>
+      <ol class="entries">
+        <li>
+          <h3>Em dashes</h3>
+          <p>Paired dashes become commas. A single dash before a short ending becomes a colon. Double hyphens count too.</p>
+          <p class="ex"><span>The policy <del>—</del><ins>,</ins> announced without warning <del>—</del><ins>,</ins> affects everyone.</span></p>
+        </li>
+        <li>
+          <h3>Chatbot lines and openers</h3>
+          <p>"Certainly! Here's a rewritten version:" at the top, "I hope this helps!" at the bottom, and theatrical openers like "Here's the thing:" in between.</p>
+          <p class="ex"><span><del>Here's the thing: </del><ins>M</ins><del>m</del>ost teams never read the report.</span></p>
+        </li>
+        <li>
+          <h3>Buzzwords</h3>
+          <p>Delve, seamless, robust, leverage, testament, tapestry. Swapped for the plain word, or dropped when it only decorates a noun.</p>
+          <p class="ex"><span>Our <del>world-class</del> team will <del>leverage</del> <ins>use</ins> the data.</span></p>
+        </li>
+        <li>
+          <h3>Filler and hedges</h3>
+          <p>"In order to" becomes "to". "Could potentially" becomes "could". Throat-clearing like "It's important to note that" goes.</p>
+          <p class="ex"><span><del>It's important to note that </del><ins>T</ins><del>t</del>his <del>could potentially</del> <ins>could</ins> slip.</span></p>
+        </li>
+        <li>
+          <h3>Formula sentences</h3>
+          <p>"It's not just X, it's Y." "Not only X but also Y." A pile of Moreover and Furthermore. The upbeat send-off at the end.</p>
+          <p class="ex"><span>It's <del>not just </del>a dashboard<del>, it's</del> <ins>and</ins> a command center.</span></p>
+        </li>
+        <li>
+          <h3>Formatting tells</h3>
+          <p>Emoji in headings, <code>**bold**</code> markers on every term, sentences shouted in capitals, and clusters of "scare" "quotes".</p>
+          <p class="ex"><span><del>🚀 </del>Launch plan. We must act <del>NOW BEFORE FRIDAY</del> <ins>now before Friday</ins>.</span></p>
+        </li>
+      </ol>
+
+      <div class="limits">
+        <h2>What it can't do</h2>
+        <p>This is a set of rules, not a language model. It swaps and cuts phrases it recognizes. It does not rethink your argument, fix a passive voice with no actor, break up a rule-of-three list, or catch a buzzword it has never seen. Some edits can land awkwardly, so read the result before you use it. The marked view shows every change.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>Runs in your browser. No account, no cookies, no analytics, no network requests after the page loads. Up to 150,000 words per run.</p>
+  </footer>
+
+  <script src="js/engine.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/tour.js"></script>
+</body>
+</html>

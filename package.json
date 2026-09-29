@@ -1,0 +1,11 @@
+{
+  "name": "antislop-paraphrase",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static site that strips AI writing tells from pasted text, entirely in the browser.",
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "test": "node --test tests/engine.test.js"
+  },
+  "engines": { "node": ">=18" }
+}
