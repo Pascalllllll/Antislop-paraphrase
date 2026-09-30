@@ -4,6 +4,8 @@ Paste text that sounds like a chatbot wrote it and get it back with the tells cr
 
 It swaps buzzwords for plain words, cuts lines like "I hope this helps!", and marks every edit so you can check it. Your text never leaves your browser.
 
+**Try it: [antislop-paraphrase.vercel.app](https://antislop-paraphrase.vercel.app)**
+
 ## Run locally
 
 You need [Node.js](https://nodejs.org) 18 or newer. Check with `node -v`. There is nothing to install.
