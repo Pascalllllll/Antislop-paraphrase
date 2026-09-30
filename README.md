@@ -20,16 +20,6 @@ No Node? `python3 -m http.server 8080` serves the page too, just without the sec
 
 Run the engine tests with `npm test`.
 
-## Deploy
-
-Upload the folder as-is to any static host.
-
-- **Vercel:** `vercel deploy --prod` from this folder. Headers come from `vercel.json`.
-- **Netlify / Cloudflare Pages:** point the site at this folder with no build command. Headers come from `_headers`.
-- **Anything else (nginx, S3, GitHub Pages):** copy the headers from `_headers` into your host's config. The page also carries its CSP in a `<meta>` tag, so the main protection holds even where you can't set headers.
-
-Keep `vercel.json` and `_headers` in sync if you change one.
-
 ## Files
 
 | Path | What it does |
